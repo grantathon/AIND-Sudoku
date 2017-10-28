@@ -25,7 +25,38 @@ def naked_twins(values):
     """
 
     # Find all instances of naked twins
+    naked_twins = []
+    for box, box_peers in peers.items():
+        box_naked_twins = [bp for bp in box_peers if values[bp] == values[box]]
+        if(len(box_naked_twins) > 0):
+            naked_twins.append(box_naked_twins + [box])
+
     # Eliminate the naked twins as possibilities for their peers
+    for naked_twins_set in naked_twins:
+        # Only grab peers the naked twins share
+        shared_nts_peers = []
+        for i in range(len(naked_twins_set) - 1):
+            shared_peers = list(set(peers[naked_twins_set[i]]).intersection(peers[naked_twins_set[i + 1]]))
+            shared_nts_peers.extend(shared_peers)
+        shared_nts_peers = list(set(shared_nts_peers))
+
+        nts_values = values[naked_twins_set[0]]
+        for peer in shared_nts_peers:
+            for digit in nts_values:
+                peer_values = values[peer]
+                if(digit in peer_values and len(peer_values) > 1):
+                    value = peer_values.replace(digit, '')
+                    values = assign_value(values, peer, value)
+
+    return values
+
+    # solved_values = [box for box in values.keys() if len(values[box]) == 1]
+    # for box in solved_values:
+    #     digit = values[box]
+    #     for peer in peers[box]:
+    #         value = values[peer].replace(digit,'')
+    #         values = assign_value(values, peer, value)
+    # return values
 
 def cross(a, b):
     "Cross product of elements in A and elements in B."
