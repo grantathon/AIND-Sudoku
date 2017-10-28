@@ -1,5 +1,6 @@
 import solution
 import unittest
+from solution import display
 
 
 class TestNakedTwins(unittest.TestCase):
@@ -67,6 +68,25 @@ class TestNakedTwins(unittest.TestCase):
          'I3': '5', 'I4': '7', 'I5': '2', 'I6': '6', 'I7': '1', 'I8': '4', 'I9': '8'}
     ]
 
+    before_naked_twins_3 = {"B3": "3", "G7": "1234568", "G4": "23678", "E2": "123568", "B8": "8",
+                            "B4": "46", "D1": "123689", "A4": "5", "H5": "35678", "E6": "23568",
+                            "C6": "368", "B5": "46", "H1": "2346789", "F9": "1234568", "C5": "2",
+                            "D8": "1235679", "F4": "23468", "D5": "1356789", "I5": "35678", "B6":
+                            "1", "D7": "123568", "A2": "9", "B2": "2", "C3": "4678", "E4":
+                            "234678", "D2": "4", "G5": "35678", "E7": "1234568", "E9": "12345678",
+                            "F5": "1345689", "D6": "23568", "G2": "123568", "D3": "25689", "G3":
+                            "245678", "I7": "9", "I6": "4", "H2": "23568", "H7": "234568", "F2":
+                            "7", "G6": "9", "H9": "2345678", "E8": "12345679", "I4": "23678",
+                            "F3": "25689", "H4": "1", "D9": "1235678", "A1": "2468", "A6": "7",
+                            "D4": "23678", "C8": "13456", "A8": "2346", "C4": "9", "I3": "25678",
+                            "I2": "123568", "F6": "23568", "B7": "7", "H3": "2456789", "A5":
+                            "3468", "G9": "12345678", "E3": "25689", "E5": "13456789", "C7":
+                            "13456", "F7": "1234568", "A7": "2346", "B9": "9", "G8": "1234567",
+                            "C1": "4678", "H8": "234567", "F8": "1234569", "E1": "123689", "I1":
+                            "123678", "C9": "13456", "I9": "1235678", "H6": "23568", "A9": "2346",
+                            "B1": "5", "I8": "123567", "G1": "1234678", "A3": "1", "F1": "123689",
+                            "C2": "68"}
+
     def test_naked_twins(self):
         self.assertTrue(solution.naked_twins(self.before_naked_twins_1) in self.possible_solutions_1,
                         "Your naked_twins function produced an unexpected board.")
@@ -76,8 +96,14 @@ class TestNakedTwins(unittest.TestCase):
                         "Your naked_twins function produced an unexpected board.")
 
     def test_naked_twins3(self):
-        solution.naked_twins(self.before_naked_twins_1)
-        
+        print('BEFORE')
+        display(self.before_naked_twins_3)
+        print()
+
+        s = solution.naked_twins(self.before_naked_twins_3)
+        print('AFTER')
+        display(s)
+
 class TestDiagonalSudoku(unittest.TestCase):
     diagonal_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
     solved_diag_sudoku = {'G7': '8', 'G6': '9', 'G5': '7', 'G4': '3', 'G3': '2', 'G2': '4', 'G1': '6', 'G9': '5',
