@@ -1,5 +1,3 @@
-from pprint import pprint
-
 assignments = []
 
 def assign_value(values, box, value):
@@ -26,33 +24,30 @@ def naked_twins(values):
         the values dictionary with the naked twins eliminated from peers.
     """
 
-    # Find all instances of naked twins
+    new_values = values.copy()
     naked_twins = []
-    for box, box_peers in peers.items():
-        box_naked_twins = [bp for bp in box_peers if values[bp] == values[box] if len(values[bp]) == 2]
-        if(len(box_naked_twins) > 0):
-            for bnt in box_naked_twins:
-                if([bnt, box] not in naked_twins):
-                    naked_twins.append([box, bnt])
 
-    # Eliminate the naked twins as possibilities for their peers
-    for naked_twins_set in naked_twins:
-        # Only grab peers the naked twins share
-        shared_nts_peers = []
-        for i in range(len(naked_twins_set) - 1):
-            shared_peers = list(set(peers[naked_twins_set[i]]).intersection(peers[naked_twins_set[i + 1]]))
-            shared_nts_peers.extend(shared_peers)
-        shared_nts_peers = list(set(shared_nts_peers))
+    # Find all instances of naked twins
+    for box in new_values:
+        if len(new_values[box]) == 2:
+            for peer in peers[box]:
+                if box < peer and new_values[peer] == new_values[box]:
+                    naked_twins.append([box, peer])
 
-        nts_values = values[naked_twins_set[0]]
-        for peer in shared_nts_peers:
-            for digit in nts_values:
-                peer_values = values[peer]
-                if(digit in peer_values and len(peer_values) > 1):
-                    value = peer_values.replace(digit, '')
-                    values = assign_value(values, peer, value)
+    for nt in naked_twins:
+        # Find the units that contains these two naked twins
+        units = [u for u in unitlist if nt[0] in u and nt[1] in u]
+        for unit in units:
+            for box in unit:
+                if box != nt[0] and box != nt[1]:
+                    assign_value(new_values, box, new_values[box].replace(new_values[nt[0]][0], ''))
+                    assign_value(new_values, box, new_values[box].replace(new_values[nt[0]][1], ''))
 
-    return values
+    # Check for invalid solutions
+    if len([box for box in new_values.keys() if len(new_values[box]) == 0]):
+        return False
+
+    return new_values
 
 def cross(a, b):
     "Cross product of elements in A and elements in B."
@@ -65,10 +60,9 @@ boxes = cross(rows, cols)
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
-diagonal_units = [
-    ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8', 'I9'],
-    ['A9', 'B8', 'C7', 'D6', 'E5', 'F4', 'G3', 'H2', 'I1']
-]
+diagonal1 = [a[0]+a[1] for a in zip(rows, cols)]
+diagonal2 = [a[0]+a[1] for a in zip(rows, cols[::-1])]
+diagonal_units = [diagonal1, diagonal2]
 unitlist = row_units + column_units + square_units + diagonal_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
@@ -116,7 +110,7 @@ def eliminate(values):
         digit = values[box]
         for peer in peers[box]:
             value = values[peer].replace(digit,'')
-            values = assign_value(values, peer, value)
+            assign_value(values, peer, value)
     return values
 
 def only_choice(values):
@@ -129,7 +123,7 @@ def only_choice(values):
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
             if len(dplaces) == 1:
-                values = assign_value(values, dplaces[0], digit)
+                assign_value(values, dplaces[0], digit)
     return values
 
 def reduce_puzzle(values):
