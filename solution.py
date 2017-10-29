@@ -1,3 +1,5 @@
+from pprint import pprint
+
 assignments = []
 
 def assign_value(values, box, value):
@@ -27,9 +29,11 @@ def naked_twins(values):
     # Find all instances of naked twins
     naked_twins = []
     for box, box_peers in peers.items():
-        box_naked_twins = [bp for bp in box_peers if values[bp] == values[box]]
+        box_naked_twins = [bp for bp in box_peers if values[bp] == values[box] if len(values[bp]) == 2]
         if(len(box_naked_twins) > 0):
-            naked_twins.append(box_naked_twins + [box])
+            for bnt in box_naked_twins:
+                if([bnt, box] not in naked_twins):
+                    naked_twins.append([box, bnt])
 
     # Eliminate the naked twins as possibilities for their peers
     for naked_twins_set in naked_twins:
@@ -49,14 +53,6 @@ def naked_twins(values):
                     values = assign_value(values, peer, value)
 
     return values
-
-    # solved_values = [box for box in values.keys() if len(values[box]) == 1]
-    # for box in solved_values:
-    #     digit = values[box]
-    #     for peer in peers[box]:
-    #         value = values[peer].replace(digit,'')
-    #         values = assign_value(values, peer, value)
-    # return values
 
 def cross(a, b):
     "Cross product of elements in A and elements in B."
